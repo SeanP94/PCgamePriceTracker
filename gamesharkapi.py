@@ -29,10 +29,10 @@ class GameSharkAPI:
         Keyword arguments:
         url: Url to test, base one is the test one from the website.
         """
-        jsonData = self.requestTest(url)
+        jsonData = self.requestUrl(url)
         if jsonData != None: 
-            self.printJson(json)
-    
+            self.printJson(jsonData[:5])
+
     def requestUrl(self, url) :
         """Class to pass in a url to get the json data back.
 
@@ -62,7 +62,25 @@ class GameSharkAPI:
         for data in jsonData:
             print(json.dumps(data, indent=4))
 
+    def goToDeal(self, dealId:str):
+        """Takes in a dealId and sends you to the link through
+        cheapsharks portal (Used to help them get a credit for the
+        sale, if bought, terms of using the API for free.)
+        """
+        #dealId="liaqeBQtozzs0vzBu8CY9pN78c4rUdHcSdL2SnDowhA%3D"
+        dealUrl = f"https://www.cheapshark.com/redirect?dealID={dealId}"
+        
+        # This will be replaced later with functionality in streamlit
+        # NOTE: This is really slow to open a browser in WSL.
+        #       Keep the WSL chrome browser open after first run.
+        #       For faster testing
+        
+        import webbrowser  
+        webbrowser.open(dealUrl, new=0, autoraise=True)
+    
+        
 
 
 gsa = GameSharkAPI()
-gsa.requestTest()
+#gsa.requestTest()
+#gsa.goToDeal("")
