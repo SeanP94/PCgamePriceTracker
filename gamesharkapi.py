@@ -1,6 +1,9 @@
 """
-An Unstructured attempt at accessing the API
+File for the GameSharkAPI class
+Holds all functionality and logging for the class.
 
+TEMPORARY:
+Will be the main driver as I test this class and build it out.
 
 """
 from time import sleep # Need to make sure we pause for a second after every API call
@@ -15,7 +18,7 @@ logging.basicConfig(filename='requestsError.log', encoding='utf-8', level=loggin
 
 class GameSharkAPI:
     def __init__(self):
-        self.baseUrl = "https://www.cheapshark.com/"
+        self.baseUrl = "https://www.cheapshark.com/api/1.0/"
         self.payload={}
         self.headers = {}
     
@@ -36,6 +39,7 @@ class GameSharkAPI:
 
         # Print the first 5 files found
         for game in response.json()[:5]:
+
             print(json.dumps(game, indent=4))
 
 gsa = GameSharkAPI()
