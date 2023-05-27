@@ -18,5 +18,8 @@ To begin, <br>
 - Finally for visualizing the information(This will be a seperate repo), I will either create a Kotlin App, or I will host the information on a website created with pythons Streamlit library. 
  
 
- ## Notes
+## Notes
 - This project will pull from a file called SECRETS.json that will store anything private. This will not be available in the github repo but I will show the format of the Json file below
+
+## Questions
+- Can I use NLP to search for games via the API? 
