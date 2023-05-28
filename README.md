@@ -15,6 +15,7 @@ To begin, <br>
   - Eventually, it will be on the cloud. In the beginning it will be hosted locally while I work through it and get more comfortable with.
   - I would LOVE to use Spark and Databricks for this project. So as I progress I will possibly adjust to this
 - Once this project is complete, I'll be setting up the data ingestion on a Raspberrypi 4 to run on a schedule via Apache Airflow.
+  - Slight change of plans to the Airflow implementation. I still want to utilize it. But Cheapshark's API is meant for taking in a users input and getting the data. So what I think will work, is storing user search history by a key, or email. Streamlit allows for user login, so based on this, create a table in SQL that stores a users search history and run it every morning so if the user wants to come back they can see a list of there recent searches, sorted by updates if an item is on sale.
 - Finally for visualizing the information(This will be a seperate repo), I will either create a Kotlin App, or I will host the information on a website created with pythons Streamlit library. 
  
 

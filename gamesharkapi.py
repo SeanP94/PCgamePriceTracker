@@ -29,9 +29,10 @@ class GameSharkAPI:
         Keyword arguments:
         url: Url to test, base one is the test one from the website.
         """
-        jsonData = self.requestUrl(url)
+        jsonData = self.requestUrl(url).json()
         if jsonData != None: 
             self.printJson(jsonData[:5])
+        return jsonData
 
     def requestUrl(self, url) :
         """Class to pass in a url to get the json data back.
@@ -47,7 +48,7 @@ class GameSharkAPI:
             sleep(1) # Pauses for 1 second in between any call
             response = requests.request("GET", url, headers=self.headers, data=self.payload)
             assert 200 == response.status_code
-            return response.json()
+            return response
         except:
             logging.error(f"ERROR: Did not recieve code 200, recieved code {response.status_code}; URL: {url}")
             print(f"ERROR: Did not recieve code 200, recieved code {response.status_code}; URL: {url}")
@@ -90,10 +91,24 @@ class GameSharkAPI:
     def getStoreIds(self):
         storeUrl = self.baseUrl + "stores"
         jsonObj = self.requestUrl(storeUrl)
-        self.printJson(jsonData=jsonObj)    
+        self.printJson(jsonData=jsonObj.json())    
+        
+    def getMaxDealPages(self):
+        """Uses the test to get the max amount of pages.
+        """
+        data = self.requestUrl(url="https://www.cheapshark.com/api/1.0/deals?pageSize=60&pageNumber=0&title=DRAGON%20QUEST")
+        if data == None:
+            return
+        self.printJson(data.json())
+
+        
+        print(data.headers['X-Total-Page-Count'])
+        print(len(data.json()))
         
         
 gsa = GameSharkAPI()
 #gsa.requestTest()
 #gsa.goToDeal("")
-gsa.getStoreIds()
+#gsa.getStoreIds()
+
+gsa.getMaxDealPages()
