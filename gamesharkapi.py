@@ -67,7 +67,8 @@ class GameSharkAPI:
         cheapsharks portal (Used to help them get a credit for the
         sale, if bought, terms of using the API for free.)
         """
-        #dealId="liaqeBQtozzs0vzBu8CY9pN78c4rUdHcSdL2SnDowhA%3D"
+
+        dealId="liaqeBQtozzs0vzBu8CY9pN78c4rUdHcSdL2SnDowhA%3D"
         dealUrl = f"https://www.cheapshark.com/redirect?dealID={dealId}"
         
         # This will be replaced later with functionality in streamlit
@@ -78,9 +79,21 @@ class GameSharkAPI:
         import webbrowser  
         webbrowser.open(dealUrl, new=0, autoraise=True)
     
+    def getAllDeals(self):
+        """Get all deals from Cheapshark Api.
+        TODO: 
+            1. This will feed the data into PySpark. 
+            2. Figure out how to get the entire list, since you get the data in pages.
+        """
+        initRun = self.baseUrl + f"deals?"
+    
+    def getStoreIds(self):
+        storeUrl = self.baseUrl + "stores"
+        jsonObj = self.requestUrl(storeUrl)
+        self.printJson(jsonData=jsonObj)    
         
-
-
+        
 gsa = GameSharkAPI()
 #gsa.requestTest()
 #gsa.goToDeal("")
+gsa.getStoreIds()
