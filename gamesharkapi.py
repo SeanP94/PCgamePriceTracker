@@ -4,7 +4,7 @@ Holds all functionality and logging for the class.
 
 TEMPORARY:
 Will be the main driver as I test this class and build it out.
-
+Test
 """
 from time import sleep # Need to make sure we pause for a second after every API call
 import requests
