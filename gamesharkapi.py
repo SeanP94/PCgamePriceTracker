@@ -10,7 +10,7 @@ from time import sleep # Need to make sure we pause for a second after every API
 import requests
 import json
 import logging
-
+import re
 # Setup error Logging.
 logging.basicConfig(filename='requestsError.log', encoding='utf-8', level=logging.ERROR)
 
@@ -93,10 +93,13 @@ class GameSharkAPI:
         jsonObj = self.requestUrl(storeUrl)
         self.printJson(jsonData=jsonObj.json())    
         
-    def getMaxDealPages(self):
+    def getMaxDealPages(self, **argv):
         """Uses the test to get the max amount of pages.
         """
-        data = self.requestUrl(url="https://www.cheapshark.com/api/1.0/deals?pageSize=60&pageNumber=0&title=DRAGON%20QUEST")
+        
+        title = "" if not argv.get("title") else f"&title={argv['title']}"
+
+        data = self.requestUrl(url=f"https://www.cheapshark.com/api/1.0/deals?pageSize=60&pageNumber=0{title}")
         if data == None:
             return
         self.printJson(data.json())
@@ -104,11 +107,24 @@ class GameSharkAPI:
         
         print(data.headers['X-Total-Page-Count'])
         print(len(data.json()))
+
+    def searchGame(self, userInput):
+        """Runs a query to the API to search for a game given a parameter.
+        converts the userInput into a format the API recognizes.
+        """
+        userInput = userInput.strip().replace(" ", "%20").upper()
+        self.getMaxDealPages(title=userInput)
         
-        
+
 gsa = GameSharkAPI()
 #gsa.requestTest()
 #gsa.goToDeal("")
 #gsa.getStoreIds()
 
-gsa.getMaxDealPages()
+#gsa.getMaxDealPages()
+
+def imitateUserInput(gsa):
+    userInput = input("Enter game to search: ")
+    gsa.searchGame(userInput)
+    
+imitateUserInput(gsa)
