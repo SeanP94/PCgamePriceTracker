@@ -10,12 +10,13 @@ To begin, <br>
 - I will be using the CheapShark API to track pricing of games. [ ]
 - I will clean and transform the data and move it into a database. [ ]
 - I will be using some form of (hopefully free) cloud computing for this project. [ ]
-  - Debating on using AWS, otherwise I'll use something like Firebase, but for SQL. (Still need to research this.)
-    - (I've used Firebase for a school project before, so I rather use SQL for this project so that I can clean and utilize the data differently.)
   - Eventually, it will be on the cloud. In the beginning it will be hosted locally while I work through it and get more comfortable with.
-  - I would LOVE to use Spark and Databricks for this project. So as I progress I will possibly adjust to this
+    - Looking into Bluehost or Hostinger. I want to avoid using AWS until I've professionally used it. And this way I can make sure I have both a SQL server (MySQL) and a websitehost (Website might be hosted directly on Streamlit) and it will be a set 3$ a month.
+  - I would LOVE to use Spark for this project. If not I'll design my own pipeline with Pandas.
+
 - Once this project is complete, I'll be setting up the data ingestion on a Raspberrypi 4 to run on a schedule via Apache Airflow.
   - Slight change of plans to the Airflow implementation. I still want to utilize it. But Cheapshark's API is meant for taking in a users input and getting the data. So what I think will work, is storing user search history by a key, or email. Streamlit allows for user login, so based on this, create a table in SQL that stores a users search history and run it every morning so if the user wants to come back they can see a list of there recent searches, sorted by updates if an item is on sale.
+  
 - Finally for visualizing the information(This will be a seperate repo), I will either create a Kotlin App, or I will host the information on a website created with pythons Streamlit library. 
  
 
