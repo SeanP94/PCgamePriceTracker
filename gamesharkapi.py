@@ -11,6 +11,8 @@ import requests
 import json
 import logging
 import re
+import mysql.connector
+import json
 # Setup error Logging.
 logging.basicConfig(filename='requestsError.log', encoding='utf-8', level=logging.ERROR)
 
@@ -116,15 +118,58 @@ class GameSharkAPI:
         self.getMaxDealPages(title=userInput)
         
 
-gsa = GameSharkAPI()
-#gsa.requestTest()
-#gsa.goToDeal("")
-#gsa.getStoreIds()
 
-#gsa.getMaxDealPages()
-
-def imitateUserInput(gsa):
-    userInput = input("Enter game to search: ")
-    gsa.searchGame(userInput)
+class SqlInteractions:
     
-imitateUserInput(gsa)
+    def __init__(self):
+        """
+        Launches the sql object
+        Initializes core functionality and creates a self.__cur object.
+        """
+
+    def nonCommitWrapper(func):
+        """
+        Singular Input, resets the 
+        """
+        def wrapper(self, *x):
+            with open(".secrets.json", 'r') as f:
+                data = json.load(f)
+                connection = mysql.connector.connect(
+                    host=data['host'],
+                    database=data["database"],
+                    user=data['user'],
+                    passwd=data['password']
+                )
+                del data # We want to not keep .secrets in memory :) 
+            self.__cur = connection.cursor()
+            
+            print("Opening Connection.")
+            if len(x) > 0:
+                func(self, *x)
+            else:
+                func(self)
+            print("Closing Connection.")
+            self.__cur.close()
+        return wrapper
+
+    @nonCommitWrapper
+    def getTableNames(self):
+        """
+        Used to return the table names for the class to function properly
+        """
+        self.__curr.execute("""
+        SHOW TABLES;
+        """)
+        self.__curr.fetchall()
+    
+    @nonCommitWrapper
+    def getTableNames2(self, z):
+        """
+        Used to return the table names for the class to function properly
+        """
+        
+    def getTableCopy(tableName):
+        pass
+
+# test = SqlInteractions()
+# test.getTableNames()
