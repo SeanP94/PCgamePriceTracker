@@ -21,6 +21,7 @@ logging.basicConfig(filename='requestsError.log', encoding='utf-8', level=loggin
 class GameSharkAPI:
     def __init__(self):
         self.baseUrl = "https://www.cheapshark.com/api/1.0/"
+        self.baseImgUrl = "https://www.cheapshark.com/"
         self.payload={}
         self.headers = {}
     
@@ -36,7 +37,7 @@ class GameSharkAPI:
             self.printJson(jsonData[:5])
         return jsonData
 
-    def requestUrl(self, url) :
+    def requestUrl(self, url)  :
         """Class to pass in a url to get the json data back.
 
         Keyword arguments:
@@ -93,7 +94,19 @@ class GameSharkAPI:
     def getStoreIds(self):
         storeUrl = self.baseUrl + "stores"
         jsonObj = self.requestUrl(storeUrl)
-        self.printJson(jsonData=jsonObj.json())    
+        #self.printJson(jsonData=jsonObj.json())
+
+        # Cleanse the Json Data to be inserted into MySQL
+        listOfJson = []
+        if jsonObj:
+            for data in jsonObj.json():
+                data['storeID'] = int(data['storeID'])
+                newData = data | {key : self.baseImgUrl + row[1:] for key, row in data["images"].items()}
+                del newData['images']
+                listOfJson.append(newData)
+            return listOfJson
+        return listOfJson
+                
         
     def getMaxDealPages(self, **argv):
         """Uses the test to get the max amount of pages.
@@ -126,6 +139,7 @@ class SqlInteractions:
         Launches the sql object
         Initializes core functionality and creates a self.__cur object.
         """
+        self.gsa = GameSharkAPI()
 
     def nonCommitWrapper(func):
         """
@@ -137,8 +151,9 @@ class SqlInteractions:
                 connection = mysql.connector.connect(
                     host=data['host'],
                     database=data["database"],
-                    user=data['user'],
-                    passwd=data['password']
+                    user=data['cpanel_user'],
+                    port=data["port"],
+                    passwd=data['cpanel_pass']
                 )
                 del data # We want to not keep .secrets in memory :) 
             self.__cur = connection.cursor()
@@ -152,6 +167,40 @@ class SqlInteractions:
             self.__cur.close()
         return wrapper
 
+
+
+    def commitWrapper(func):
+        """
+        Singular Input
+        PLEASE TEST THIS BEFORE USE!!!
+        THIS WAS CREATED HAPHAZARDLY
+        """
+        def wrapper(self, *x):
+            with open(".secrets.json", 'r') as f:
+                data = json.load(f)
+                self.connection = mysql.connector.connect(
+                    host=data['host'],
+                    database=data["database"],
+                    user=data['cpanel_user'],
+                    port=data["port"],
+                    passwd=data['cpanel_pass']
+                )
+                del data # We want to not keep .secrets in memory :) 
+            self.connection.autocommit = True
+            self.__cur = self.connection.cursor()
+            
+            print("Opening Connection.")
+            if len(x) > 0:
+                func(self, *x)
+            else:
+                func(self)
+            self.connection.commit()
+            print("Commited\nClosing Connection.")
+            self.__cur.close()
+            self.connection.close()
+        return wrapper
+
+
     @nonCommitWrapper
     def getTableNames(self):
         """
@@ -161,15 +210,23 @@ class SqlInteractions:
         SHOW TABLES;
         """)
         self.__curr.fetchall()
-    
     @nonCommitWrapper
     def getTableNames2(self, z):
         """
         Used to return the table names for the class to function properly
         """
         
-    def getTableCopy(tableName):
+    def getTableCopy(self, tableName):
         pass
 
-# test = SqlInteractions()
-# test.getTableNames()
+    @commitWrapper
+    def updateStoreDB(self):
+        """
+        Takes the read in data from the cheapshark API and stores the data in MySQL through 
+        insertStoresJsonIn
+        """
+        dataSet = self.gsa.getStoreIds()
+        jsonData = json.dumps(dataSet)
+        print(jsonData) 
+        self.__cur.callproc('insertStoresJsonIn', [jsonData])
+        
